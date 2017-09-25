@@ -7,7 +7,12 @@ import java.net.Socket;
 public class Server {
     public static void main(String[] args) throws IOException {
         // try to open JSON file from command line argument path
-        File dataFile = new File(args[0]);
+        File dataFile;
+        if (args.length == 1) {
+            dataFile = new File(args[0]);
+        } else {
+            throw new IllegalArgumentException("Invalid path input");
+        }
         // throw error if JSON file does not exist at command line argument path
         if (!dataFile.exists() || !dataFile.getName().endsWith(".json")) {
             throw new IllegalArgumentException("No JSON file exists at that path");

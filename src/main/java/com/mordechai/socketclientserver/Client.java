@@ -11,7 +11,6 @@ public class Client {
     public static void main(String[] args) throws IOException {
         try {
             Scanner scanner = new Scanner(System.in);
-
             // establish connection with server
             int port = 5056;
             Socket socket;
@@ -21,11 +20,9 @@ public class Client {
             } catch (Exception e) {
                 throw new IllegalStateException("No server listening at port " + port);
             }
-
             // open input and output streams
             DataInputStream inputStream = new DataInputStream(socket.getInputStream());
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-
             // exchange information between client and client handler
             while (true) {
                 System.out.println(inputStream.readUTF());
@@ -43,7 +40,6 @@ public class Client {
                 String received = inputStream.readUTF();
                 System.out.println(received);
             }
-
             // close streams
             scanner.close();
             inputStream.close();

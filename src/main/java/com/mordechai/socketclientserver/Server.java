@@ -33,16 +33,13 @@ public class Server {
                 // socket to receive incoming client requests
                 socket = serverSocket.accept();
                 System.out.println("New client connected at port " + socket.getPort());
-
                 // open input and output streams
                 DataInputStream inputStream = new DataInputStream(socket.getInputStream());
                 DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-
                 // create new thread for client handler
                 Thread thread = new ClientHandler(socket, inputStream, outputStream, dataFile);
                 thread.start();
                 System.out.println("Created new client handler on " + thread.getName());
-
             } catch (Exception e) {
                 socket.close();
                 e.printStackTrace();

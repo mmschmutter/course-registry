@@ -70,27 +70,39 @@ class ClientHandler extends Thread {
                 else if (request[0].toLowerCase().equals("add")) {
                     // check for valid add parameters
                     if (request.length > 3 && request[1].length() == 3 && isInt(request[2])) {
-                        backupCurrent();
-                        // build course name
-                        String courseName = "";
-                        for (int i = 3; i < request.length; i++) {
-                            courseName += request[i] + " ";
+                        // check if CRN already exists
+                        boolean exists = false;
+                        for (String major : jsonObject.keySet()) {
+                            if (jsonObject.getAsJsonObject(major).has(request[2])) {
+                                exists = true;
+                                break;
+                            }
                         }
-                        courseName = courseName.trim();
-                        String nameJson = "{\"Name\":\"" + courseName + "\"}";
-                        // check if major code already exists
-                        if (jsonObject.has(request[1].toUpperCase())) {
-                            JsonElement jsonName = parser.parse(nameJson);
-                            // add CRN and course name
-                            jsonObject.getAsJsonObject(request[1].toUpperCase()).add(request[2], jsonName);
+                        if (exists) {
+                            outputStream.writeUTF("Course with that CRN already exists");
                         } else {
-                            String crnJson = "{\"" + request[2] + "\":" + nameJson + "}";
-                            JsonElement jsonCrn = parser.parse(crnJson);
-                            // add major code, CRN, and course name
-                            jsonObject.add(request[1].toUpperCase(), jsonCrn);
+                            backupCurrent();
+                            // build course name
+                            String courseName = "";
+                            for (int i = 3; i < request.length; i++) {
+                                courseName += request[i] + " ";
+                            }
+                            courseName = courseName.trim();
+                            String nameJson = "{\"Name\":\"" + courseName + "\"}";
+                            // check if major code already exists
+                            if (jsonObject.has(request[1].toUpperCase())) {
+                                JsonElement jsonName = parser.parse(nameJson);
+                                // add CRN and course name
+                                jsonObject.getAsJsonObject(request[1].toUpperCase()).add(request[2], jsonName);
+                            } else {
+                                String crnJson = "{\"" + request[2] + "\":" + nameJson + "}";
+                                JsonElement jsonCrn = parser.parse(crnJson);
+                                // add major code, CRN, and course name
+                                jsonObject.add(request[1].toUpperCase(), jsonCrn);
+                            }
+                            writeToDataFile();
+                            outputStream.writeUTF("Course entry added\n");
                         }
-                        writeToDataFile();
-                        outputStream.writeUTF("Course entry added\n");
                     } else {
                         outputStream.writeUTF("Invalid course entry syntax\n");
                     }

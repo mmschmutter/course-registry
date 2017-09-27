@@ -28,14 +28,12 @@ public class Client {
                 System.out.println(inputStream.readUTF());
                 String toSend = scanner.nextLine();
                 outputStream.writeUTF(toSend);
-
                 // close connection and break loop if client requests exit
                 if (toSend.toLowerCase().equals("exit")) {
                     socket.close();
                     System.out.println("Connection to server terminated at port " + socket.getLocalPort() + "\n");
                     break;
                 }
-
                 // print data returned by server
                 String received = inputStream.readUTF();
                 System.out.println(received);
